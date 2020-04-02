@@ -2,7 +2,11 @@
 #include <thread>
 using namespace std;
 
-void LaunchRocket();
+void LaunchPad();
+
+static int totalRocketsLaunched;
+
+static bool abortButton = false;
 
 //Thread 0
 int main()
@@ -11,24 +15,44 @@ int main()
 
 	cout << "*******Moon Base (Threading)********" << endl;
 
+
+	cout << "Main Thread ID: " << this_thread::get_id() << endl;
+	cout << "To start launching rockets, ";
+	system("pause");
+
+
+	int mcLaunchedRockets = 0;
+	mcLaunchedRockets++;
+	totalRocketsLaunched++;
+	cout << "Launching rocket #" << mcLaunchedRockets << " from Mission Control." << endl;
+	cout << "This is rocket #" << totalRocketsLaunched << " overall.\n";
+
+	
 	//Start a brand new thread
-	thread thread_LaunchRocket(LaunchRocket);
+	thread thread_LaunchPad(LaunchPad);
 
-	//Checks if thread 1 is still active
-	if (thread_LaunchRocket.joinable())
-	{
-		//If thread 1 is still active, tell thread 0 to wait on thread 1 to finish before continuing on.
-		thread_LaunchRocket.join();
-	}
 
+	//Abort Button
+	cout << "To abort rocket launch, press space bar.\n";
+	system("pause");
+	abortButton = true;
+	cout << "\n\tLaunches Aborted\n";
+	thread_LaunchPad.join();
 
 	return 0;
 }
 
-//Thread 1
-void LaunchRocket()
+void LaunchPad()
 {
-	//Running on a new thread
+	int lpLaunchedRockets = 0;
 
-	cout << "Launching Rocket..." << endl;
+	cout << "Launch Pad Thread ID: " << this_thread::get_id() << endl;
+
+	while (abortButton != true)
+	{
+		cout << "Launching local rocket #" << ++lpLaunchedRockets << " from launch pad.\n";
+		cout << "This is rocket #" << ++totalRocketsLaunched << " overall.\n";
+		//Simulate waiting time
+		this_thread::sleep_for(5s);
+	}
 }
